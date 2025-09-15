@@ -1,5 +1,6 @@
 from django.shortcuts import render
-from .forms import CustomUserCreationForm
+from .forms import CustomUserCreationForm, CustomUserChangeForm
+
 def new_user_view(request):
     if request.method == 'POST':
         form = CustomUserCreationForm(request.POST)
