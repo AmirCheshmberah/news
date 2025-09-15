@@ -1,0 +1,16 @@
+{% extends 'bsae.html' %}
+
+{% block title %} Home {% endblock %}
+
+{% block content %}
+
+    {% if user.is_authenticated %}
+        <p>Hi {{user.username}}</p>
+        <form action="{% url 'logout' %}" method="POST"> {% csrf_token %}
+            <button type="submit"> logout </button>
+        </form>
+    {% else %}
+        <a href= "{% url 'login'%}">login</a> | <a href="{% url 'signup'%}">signup</a>
+    {% endif %}
+
+{% endblock %}
