@@ -18,7 +18,7 @@ class ArticleDetailView(DetailView):
 class ArticleUpdateView(UpdateView):
     model = Article
     fields = ('title', 'body', )
-    template_name = 'article_update.html'
+    template_name = 'article_edit.html'
 
 class ArticleDeleteView(DeleteView):
     model = Article
