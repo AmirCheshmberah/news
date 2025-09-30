@@ -9,7 +9,6 @@ class ArticleCreateView(CreateView):
     model = Article
     fields = ('title', 'body', 'author')
     template_name = 'article_new.html'
-    success_url = reverse_lazy('article_list')
 class ArticleListView(ListView):
     model = Article
     template_name = 'article_list.html'
