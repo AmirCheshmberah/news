@@ -1,10 +1,15 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
-from django.views.generic import ListView, DetailView, UpdateView, DeleteView
+from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Article
 from .forms import ArticleEditForm
 
+class ArticleCreateView(CreateView):
+    model = Article
+    fields = ('title', 'body', 'author')
+    template_name = 'article_new.html'
+    success_url = reverse_lazy('article_list')
 class ArticleListView(ListView):
     model = Article
     template_name = 'article_list.html'
