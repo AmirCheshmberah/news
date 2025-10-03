@@ -3,12 +3,22 @@ from django.contrib.auth.decorators import login_required
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Article
-from .forms import ArticleEditForm
+from .forms import ArticleEditForm, ArticleCreateForm
 
 class ArticleCreateView(CreateView):
     model = Article
     fields = ('title', 'body', 'author')
     template_name = 'article_new.html'
+
+def article_create_view(request):
+    if request.method == 'POST':
+        form = ArticleCreateForm(request.POST)
+        if form.is_valid():
+            article = form.save()
+            return redirect(article)
+    else:
+        form = ArticleCreateForm()
+    return render(request, 'article_new.html', {'form':form})
 class ArticleListView(ListView):
     model = Article
     template_name = 'article_list.html'

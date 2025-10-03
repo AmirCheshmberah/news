@@ -5,3 +5,8 @@ class ArticleEditForm(forms.ModelForm):
     class Meta:
         model = Article
         fields = ('title', 'body', )
+
+class ArticleCreateForm(forms.ModelForm):
+    class Meta:
+        model = Article
+        fields = ('title', 'body', 'author', )
