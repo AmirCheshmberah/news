@@ -4,9 +4,9 @@ from .models import Article
 class ArticleEditForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ('title', 'body', )
+        fields = ('title', 'body',)
 
 class ArticleCreateForm(forms.ModelForm):
     class Meta:
         model = Article
-        fields = ('title', 'body', 'author', )
+        fields = ('title', 'body',)
