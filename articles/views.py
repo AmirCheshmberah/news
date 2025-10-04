@@ -1,6 +1,7 @@
 from django.shortcuts import render, get_object_or_404, redirect
 from django.contrib.auth.decorators import login_required
-from django.contrib.auth.mixins import LoginRequiredMixin
+from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Article
@@ -42,14 +43,21 @@ def article_detail_view(request, pk):
     object = get_object_or_404(Article, pk=pk)
     return render(request, 'article_detail.html', {'object':object})
 
-class ArticleUpdateView(LoginRequiredMixin, UpdateView):
+class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
-    fields = ('title', 'body', )
+    fields = ('title', 'body',)
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
     template_name = 'article_edit.html'
 
 @login_required
 def article_update_view(request, pk):
     object = get_object_or_404(Article, pk=pk)
+    
+    if object.author != request.user:
+        raise PermissionDenied
+
     if request.method == 'POST':
         form = ArticleEditForm(request.POST, instance=object)
         if form.is_valid():
@@ -59,14 +67,20 @@ def article_update_view(request, pk):
         form = ArticleEditForm(instance=object)
     return render(request, 'article_edit.html', {'form':form})
 
-class ArticleDeleteView(LoginRequiredMixin, DeleteView):
+class ArticleDeleteView(LoginRequiredMixin, UserPassesTestMixin, DeleteView):
     model = Article
     template_name = "article_delete.html"
+    def test_func(self):
+        obj = self.get_object()
+        return obj.author == self.request.user
     success_url = reverse_lazy('article_list')
 
 @login_required
 def article_delete_view(request, pk):
     object = get_object_or_404(Article, pk=pk)
+
+    if object.author != request.user:
+        raise PermissionDenied
 
     if request.method == "POST":
         object.delete()
