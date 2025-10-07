@@ -4,7 +4,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
 from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
-from .models import Article
+from .models import Article, Comment
 from .forms import ArticleEditForm, ArticleCreateForm, CommentForm
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
@@ -46,7 +46,16 @@ class ArticleDetailView(LoginRequiredMixin, DetailView):
 @login_required
 def article_detail_view(request, pk):
     article = get_object_or_404(Article, pk=pk)
-    return render(request, 'article_detail.html', {'article':article,'form':CommentForm()})
+    if request.method == 'POST':
+        form = CommentForm(request.POST)
+        if form.is_valid():
+            form.instance.author = request.user
+            form.instance.article = article
+            form.save()
+            return redirect(article)
+    else:
+        form = CommentForm()
+    return render(request, 'article_detail.html', {'article':article,'form':form})
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
