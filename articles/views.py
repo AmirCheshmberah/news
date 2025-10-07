@@ -5,7 +5,7 @@ from django.core.exceptions import PermissionDenied
 from django.urls import reverse_lazy
 from django.views.generic import ListView, DetailView, UpdateView, DeleteView, CreateView
 from .models import Article
-from .forms import ArticleEditForm, ArticleCreateForm
+from .forms import ArticleEditForm, ArticleCreateForm, CommentForm
 
 class ArticleCreateView(LoginRequiredMixin, CreateView):
     model = Article
@@ -38,10 +38,15 @@ class ArticleDetailView(LoginRequiredMixin, DetailView):
     model = Article
     template_name = 'article_detail.html'
 
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['form'] = CommentForm()
+        return context
+
 @login_required
 def article_detail_view(request, pk):
-    object = get_object_or_404(Article, pk=pk)
-    return render(request, 'article_detail.html', {'object':object})
+    article = get_object_or_404(Article, pk=pk)
+    return render(request, 'article_detail.html', {'article':article,'form':CommentForm()})
 
 class ArticleUpdateView(LoginRequiredMixin, UserPassesTestMixin, UpdateView):
     model = Article
