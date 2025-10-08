@@ -43,6 +43,18 @@ class ArticleDetailView(LoginRequiredMixin, DetailView):
         context['form'] = CommentForm()
         return context
 
+class CommentCreateView(CreateView):
+    model = Comment
+    form_class = CommentForm
+    
+    def form_valid(self, form):
+        form.instance.article = Article.objects.get(pk=self.kwargs['pk'])
+        form.instance.author = self.request.user
+        return super().form_valid(form)
+    
+    def get_success_url(self):
+        return reverse_lazy("article_detail", kwargs={'pk': self.kwargs['pk']})
+
 @login_required
 def article_detail_view(request, pk):
     article = get_object_or_404(Article, pk=pk)
